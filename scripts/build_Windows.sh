@@ -35,6 +35,7 @@ skia_use_system_harfbuzz=false
 skia_use_system_expat=false
 skia_use_system_zlib=false
 extra_cflags_cc=[\"/GR\", \"/EHsc\", \"/MD\"]
+extra_cflags=[\"/arch:AVX2\", \"-mfma\", \"-mf16c\"]
 ${EXTRA_ARGS}
 " && \
     ninja -C out/Release && \
