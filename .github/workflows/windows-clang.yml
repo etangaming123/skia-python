@@ -1,0 +1,38 @@
+name: Windows clang-cl wheel
+
+# Builds only the Windows x64 / CPython 3.11 wheel with skia compiled by
+# clang-cl (see scripts/build_Windows.sh). Skia's software rasteriser only
+# gets its optimised code under clang; MSVC builds get the generic path.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [windows-clang-cl]
+
+jobs:
+  build:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: true
+
+      - name: Show LLVM
+        shell: bash
+        run: ls "/c/Program Files/LLVM/bin/clang-cl.exe" && "/c/Program Files/LLVM/bin/clang-cl.exe" --version
+
+      - name: Build wheel
+        uses: pypa/cibuildwheel@v4.2.1
+        env:
+          CIBW_BUILD: "cp311-win_amd64"
+          CIBW_ARCHS: AMD64
+          CIBW_BEFORE_ALL: bash scripts/build_Windows.sh
+          CIBW_BEFORE_BUILD: pip install pybind11 numpy
+          CIBW_TEST_REQUIRES: pytest pillow glfw
+          CIBW_TEST_COMMAND: python -m pytest {project}/tests
+          CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: ""
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: wheel-windows-clang-cp311
+          path: ./wheelhouse/*.whl

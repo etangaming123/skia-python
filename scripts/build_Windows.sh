@@ -21,6 +21,7 @@ cd skia && \
     python tools/git-sync-deps && \
     bin/gn gen out/Release --args="
 is_official_build=true
+clang_win=\"C:\Program Files\LLVM\"
 skia_enable_svg=true
 skia_use_vulkan=true
 skia_use_freetype=true
